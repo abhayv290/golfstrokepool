@@ -1,4 +1,5 @@
 
+import { Loader2Icon } from "lucide-react";
 import { ButtonHTMLAttributes, ReactNode } from "react";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -24,7 +25,7 @@ export function Button({
     ...props
 }: ButtonProps) {
     const baseStyles =
-        "inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
+        "inline-flex  items-center justify-center rounded-lg px-4 py-1.5 text-base font-semibold transition-colors outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer";
 
     return (
         <button
@@ -50,12 +51,9 @@ export function LoadingSwap({
     if (isLoading) {
         return (
             <div
-                className={`w-full flex items-center justify-center ${className ?? ""}`.trim()}
+                className={`w-full flex items-center justify-center  ${className ?? ""}`.trim()}
             >
-                <span
-                    className="h-5 w-5 rounded-full border-2 border-current border-t-transparent animate-spin"
-                    aria-hidden="true"
-                />
+                <Loader2Icon className="transition-transform animate-spin" />
             </div>
         );
     }

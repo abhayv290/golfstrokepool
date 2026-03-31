@@ -11,6 +11,7 @@ export interface IUser extends Document {
     razorpayCustomerId?: string
     razorpaySubscriptionId?: string
     subscriptionEnd?: Date
+    subscriptionPlan?: 'monthly' | 'yearly'
     selectedCharityId: Types.ObjectId
     charityContributionPercent: number //min 10
     createdAt: Date
@@ -39,6 +40,7 @@ const UserSchema = new Schema<IUser>({
     razorpayCustomerId: String,
     razorpaySubscriptionId: String,
     subscriptionEnd: Date,
+    subscriptionPlan: { type: String, enum: ['monthly', 'yearly'] },
     selectedCharityId: {
         type: Schema.Types.ObjectId,
         ref: 'Charity',

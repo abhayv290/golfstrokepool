@@ -2,7 +2,7 @@
 import { LogOutIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Button } from './ui/Buttom'
+import { Button } from './ui/Button'
 import { LogoutAction } from '@/actions/auth'
 import { AuthUser } from '@/types/auth'
 
@@ -13,13 +13,13 @@ interface NavItem {
 export default function Navbar({ user }: { user: AuthUser | null }) {
     const navItem: NavItem[] = [
         { label: 'Home', url: '/' },
-        { label: 'Subscribe', url: '/subscribe' },
+        { label: 'Scores', url: '/dashboard/scores' },
         { label: 'Dashboard', url: '/dashboard' },
         { label: 'admin', url: '/admin' }
     ]
 
     return (
-        <div className='w-screen h-20 px-5 shadow-sm shadow-slate-700'>
+        <div className='h-20 z-10 w-full shadow-sm shadow-slate-700 mb-5'>
             <nav className='mx-auto h-full px-3 flex items-center justify-between'>
                 {/* Brand Logo and Title  */}
                 <div className='flex h-full items-center gap-2'>

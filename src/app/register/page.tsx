@@ -1,7 +1,7 @@
 'use client'
 
 import { registerAction } from "@/actions/auth";
-import { Button, LoadingSwap } from "@/components/ui/Buttom";
+import { Button, LoadingSwap } from "@/components/ui/Button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
@@ -38,17 +38,23 @@ export default function RegisterPage() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center  bg-background p-4">
-            <div className="w-full max-w-md shadow-md shadow-slate-600 p-10">
-                <header className="mb-7 text-center space-y-2">
-                    <h1 className="text-3xl font-bold tracking-tight">Create Your Account</h1>
-                    <p className="text-sm text-muted-foreground ">Join : Play. Win . Give.</p>
+        <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-zinc-950 p-4">
+            <div className="w-full max-w-md bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-8 md:p-10 shadow-sm">
+
+                <header className="mb-8 text-center">
+                    <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-2">
+                        Create Your Account
+                    </h1>
+                    <p className="text-sm text-muted-foreground font-medium uppercase tracking-wider">
+                        Join : Play • Win • Give
+                    </p>
                 </header>
-                <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
+
+                <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
                     {/* Name */}
-                    <div>
-                        <label htmlFor="name" className="block text-sm font-medium mb-1.5">
-                            Full name
+                    <div className="space-y-2">
+                        <label htmlFor="name" className="text-sm font-semibold text-slate-700 dark:text-zinc-300">
+                            Full Name
                         </label>
                         <input
                             id="name"
@@ -56,7 +62,7 @@ export default function RegisterPage() {
                             autoComplete="name"
                             placeholder="Abhay Vi"
                             aria-invalid={!!errors.name}
-                            className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none ring-offset-background focus:ring-2 focus:ring-ring disabled:opacity-50 aria-invalid:border-destructive"
+                            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none disabled:bg-slate-50 dark:bg-zinc-800 dark:border-zinc-700 dark:focus:border-blue-400 aria-invalid:border-red-500"
                             {...register('name', {
                                 required: 'Name is required',
                                 minLength: { value: 2, message: 'Name must be at least 2 characters' },
@@ -64,13 +70,14 @@ export default function RegisterPage() {
                             })}
                         />
                         {errors.name && (
-                            <p className="mt-1 text-xs text-destructive">{errors.name.message}</p>
+                            <p className="text-xs font-medium text-red-500 ml-1">{errors.name.message}</p>
                         )}
                     </div>
+
                     {/* Email */}
-                    <div>
-                        <label htmlFor="name" className="block text-sm font-medium mb-1.5">
-                            Email
+                    <div className="space-y-2">
+                        <label htmlFor="email" className="text-sm font-semibold text-slate-700 dark:text-zinc-300">
+                            Email Address
                         </label>
                         <input
                             id="email"
@@ -78,7 +85,7 @@ export default function RegisterPage() {
                             autoComplete="email"
                             placeholder="abhay@gmail.com"
                             aria-invalid={!!errors.email}
-                            className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none ring-offset-background focus:ring-2 focus:ring-ring disabled:opacity-50 aria-invalid:border-destructive"
+                            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none disabled:bg-slate-50 dark:bg-zinc-800 dark:border-zinc-700 dark:focus:border-blue-400 aria-invalid:border-red-500"
                             {...register('email', {
                                 required: 'Email is required',
                                 pattern: {
@@ -88,35 +95,52 @@ export default function RegisterPage() {
                             })}
                         />
                         {errors.email && (
-                            <p className="mt-1 text-xs text-destructive">{errors.email.message}</p>
+                            <p className="text-xs font-medium text-red-500 ml-1">{errors.email.message}</p>
                         )}
                     </div>
 
-                    {/* Password  */}
-                    <div>
-                        <label htmlFor="password">Password</label>
-                        <input type="text" id="password" autoComplete="new-password"
-                            placeholder="min 6 chars"
+                    {/* Password */}
+                    <div className="space-y-2">
+                        <label htmlFor="password" className="text-sm font-semibold text-slate-700 dark:text-zinc-300">
+                            Password
+                        </label>
+                        <input
+                            type="password" // Updated from text to password
+                            id="password"
+                            autoComplete="new-password"
+                            placeholder="••••••••"
                             aria-invalid={!!errors.password}
+                            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none disabled:bg-slate-50 dark:bg-zinc-800 dark:border-zinc-700 dark:focus:border-blue-400 aria-invalid:border-red-500"
                             {...register('password', {
                                 required: 'Password is required',
-                                minLength: { value: 6, message: 'minimum 6 char required' }
+                                minLength: { value: 6, message: 'Minimum 6 characters required' }
                             })}
-                            className="w-full rounded-lg border border-border bg-background px-3 py-2  text-sm outline-none ring-offset-background focus:ring-2 focus:ring-ring disabled:opacity-50 aria-invalid:border-destructive" />
-                        {errors.password && <p className="mt-1 text-xs text-destructive">{errors.password.message}</p>
-                        }
+                        />
+                        {errors.password && (
+                            <p className="text-xs font-medium text-red-500 ml-1">{errors.password.message}</p>
+                        )}
                     </div>
-                    <Button disabled={isPending} type="submit" variant="primary" >
+
+                    <Button
+                        disabled={isPending}
+                        type="submit"
+                        variant="primary"
+                        className="w-full "
+                    >
                         <LoadingSwap isLoading={isPending}>
                             Create Account
                         </LoadingSwap>
                     </Button>
                 </form>
-                <p className="mt-5 text-center  text-sm  text-muted-foreground">
-                    Already Have an Account?{' '}
-                    <Link href={'/login'} className="font-medium text-primary hover:text-blue-400 hover:text-underline">
-                        Sign in </Link>
-                </p>
+
+                <div className="mt-8 pt-6 border-t border-slate-100 dark:border-zinc-800 text-center">
+                    <p className="text-sm text-muted-foreground">
+                        Already have an account?{' '}
+                        <Link href={'/login'} className="font-bold text-blue-600 hover:text-blue-500 dark:text-blue-400 transition-colors">
+                            Sign in
+                        </Link>
+                    </p>
+                </div>
             </div>
         </div>
     )
