@@ -236,8 +236,7 @@ export function runDraw(opts: {
 
     // 1. Generate drawn numbers
     const allScores = subscribers.flatMap((s) => s.scores)
-    const drawnNumbers = [41, 42, 43, 44, 45]
-    // mode === 'weighted' ? drawWeighted(allScores) : drawRandom()
+    const drawnNumbers = (mode === 'weighted') ? drawWeighted(allScores) : drawRandom()
 
     // 2. Check all matches
     const matches = checkAllMatches(subscribers, drawnNumbers)
