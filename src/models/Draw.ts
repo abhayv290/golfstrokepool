@@ -1,11 +1,29 @@
-import { model, models, Schema } from "mongoose";
+import { PrizeBreakdown } from "@/types/draw";
+import { Document, model, models, Schema, Types } from "mongoose";
 
 
 export type DrawStatus = 'pending' | 'simulated' | 'published'
 export type DrawMode = 'random' | 'weighted'
 export type MatchType = 'five' | 'four' | 'three'
 
-const PrizePoolSchema = new Schema(
+export interface IDraw extends Document {
+    _id: Types.ObjectId
+    month: number        // 1–12
+    year: number
+    drawnNumbers: number[]   // exactly 5 numbers, each 1–45
+    mode: DrawMode
+    status: DrawStatus
+    prizePool: PrizeBreakdown
+    jackpotCarriedOver: number   // amount rolled over from previous month (in paise)
+    jackpotRolledToNext: boolean // true if no 5-match this month
+    subscriberCountAtDraw: number
+    publishedAt?: Date
+    createdAt: Date
+    updatedAt: Date
+}
+
+
+const PrizePoolSchema = new Schema<PrizeBreakdown>(
     {
         total: { type: Number, default: 0 },
         five: { type: Number, default: 0 },
@@ -15,7 +33,9 @@ const PrizePoolSchema = new Schema(
     { _id: false }
 )
 
-const DrawSchema = new Schema(
+
+
+const DrawSchema = new Schema<IDraw>(
     {
         month: {
             type: Number,
@@ -58,5 +78,5 @@ const DrawSchema = new Schema(
 DrawSchema.index({ year: 1, month: 1 }, { unique: true })
 DrawSchema.index({ status: 1 })
 
-const Draw = models.Draw || model('Draw', DrawSchema)
+const Draw = models.Draw<IDraw> || model<IDraw>('Draw', DrawSchema)
 export default Draw

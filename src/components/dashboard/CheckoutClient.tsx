@@ -93,7 +93,7 @@ export default function CheckoutClient({ userName, userEmail }: Props) {
         }
 
         const rzp = new (window as any).Razorpay(options)
-        rzp.on('payment.failed', (res) => {
+        rzp.on('payment.failed', () => {
             setStatus('error')
             toast.error('Payment failed ,Please Try Again')
         })

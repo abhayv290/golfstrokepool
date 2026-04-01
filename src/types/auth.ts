@@ -24,4 +24,5 @@ export interface ActionResult<T = void> {
     error: boolean;
     message: string;
     data?: T
-} 
+}
+

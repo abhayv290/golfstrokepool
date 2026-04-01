@@ -117,7 +117,7 @@ export default function ScoreManager({ initialScores }: { initialScores: ScoreEn
                 )}
                 <div className="grid gap-2">
                     {scores.map((score, index) => {
-                        const isOldest = scores.length - 1 && scores.length === MAX_SCORES
+                        const isOldest = scores.length - 1 === index && scores.length === MAX_SCORES
                         const isBeingEdited = editingId === score._id
                         return (
                             <div key={index} className={`flex items-center justify-between rounded-xl px-4 py-3 transition-colors ${isBeingEdited ? 'bg-inherit/20' : 'bg-inherit/50'}`}>
@@ -141,7 +141,7 @@ export default function ScoreManager({ initialScores }: { initialScores: ScoreEn
                                         </span>
                                         {isOldest && (
                                             <span className="text-xs text-amber-500">
-                                                Oldest- replace on next entry
+                                                Oldest-replace on next entry
                                             </span>
                                         )}
                                     </div>
