@@ -147,3 +147,15 @@ export async function verifyPaymentAction(payload: {
         return { error: true, message: 'Something went wrong,try again' }
     }
 }
+//helper function for subscription end date
+// function getSubscriptionEndDate(plan: PlanType): Date {
+
+//     const now = new Date()
+//     const subscriptionEnd = new Date(now)
+//     if (plan === 'monthly') {
+//         subscriptionEnd.setMonth(subscriptionEnd.getMonth() + 1)
+//     } else {
+//         subscriptionEnd.setFullYear(subscriptionEnd.getFullYear() + 1)
+//     }
+//     return subscriptionEnd
+// }

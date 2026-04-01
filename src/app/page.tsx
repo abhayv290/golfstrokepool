@@ -3,9 +3,9 @@ import { connectDB } from '@/lib/db'
 import Charity from '@/models/Charity'
 import Draw from '@/models/Draw'
 import User from '@/models/User'
-import HeroSection from '@/components/dashboard/home/HeroSection'
-import { PrizeTier, StepCard } from '@/components/dashboard/home/Cards'
-import { CharitySpotlight } from '@/components/dashboard/home/CharitySpotLight'
+import HeroSection from '@/components/home/HeroSection'
+import { PrizeTier, StepCard } from '@/components/home/Cards'
+import { CharitySpotlight } from '@/components/home/CharitySpotLight'
 
 async function getHomepageData() {
   await connectDB()
@@ -45,13 +45,11 @@ const MONTH_NAMES = ['', 'January', 'February', 'March', 'April', 'May', 'June',
 
 export default async function HomePage() {
   const { featuredCharity, latestDraw, subscriberCount } = await getHomepageData();
-
   return (
-    <div className="space-y-24 pb-24">
-      <HeroSection latestDraw={latestDraw} subscriberCount={subscriberCount} />
-
+    <div className="space-y-10 pb-24 overflow-y-auto scroll-smooth ">
+      <HeroSection prizePool={latestDraw.prizePool} subscriberCount={subscriberCount} />
       {/* How it works Section */}
-      <section className="max-w-7xl mx-auto px-6 space-y-12">
+      <section id='how-it-works' className="max-w-7xl mx-auto px-6 space-y-12 scroll-mt-20">
         <div className="text-center space-y-4">
           <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">How it works</h2>
           <p className="text-zinc-500 max-w-150 mx-auto text-lg">Three simple steps. No complicated rules.</p>
@@ -134,7 +132,7 @@ export default async function HomePage() {
           Join {subscriberCount} players supporting causes they care about.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link href="/register" className="px-8 py-4 rounded-full bg-zinc-50 text-zinc-900 font-bold text-lg hover:bg-zinc-200 dark:bg-zinc-900 dark:text-zinc-50">
+          <Link href={'/dashboard/scores'} className="px-8 py-4 rounded-full bg-zinc-50 text-zinc-900 font-bold text-lg hover:bg-zinc-200 dark:hover:bg-zinc-950 dark:bg-zinc-800 dark:text-zinc-50">
             Subscribe Now
           </Link>
         </div>

@@ -171,7 +171,10 @@ export default function CharityForm({ mode, charityId, defaultValues }: Props) {
                             <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase">Website</label>
                             <div className="relative">
                                 <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-zinc-400" />
-                                <input type="url" {...register('website')} placeholder="https://" className={`${inputClasses(false)} pl-9`} />
+                                <input type="url" {...register('website', {
+                                    validate: value => value === '' || /^https?:\/\/[^\s$.?#].[^\s]*$/.test(value) || 'Invalid URL format'
+                                })} placeholder="https://" className={`${inputClasses(false)} pl-9`} />
+                                {errors.website && <p className="text-[10px] font-bold text-rose-500 uppercase mt-1">{errors.website.message}</p>}
                             </div>
                         </div>
                     </div>

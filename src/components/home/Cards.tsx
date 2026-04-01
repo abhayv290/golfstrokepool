@@ -2,7 +2,7 @@ import { PRIZE_TIERS } from "@/app/page";
 
 export function StepCard({ step, title, description }: { step: string, title: string, description: string }) {
   return (
-    <div className="relative p-8 rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950 shadow-sm">
+    <div className="relative p-8 rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950 shadow-sm shadow-zinc-300 transition-transform hover:-translate-y-1 dark:shadow-zinc-800">
       <span className="text-5xl font-black text-zinc-100 dark:text-zinc-900 absolute top-4 right-6 select-none">
         {step}
       </span>

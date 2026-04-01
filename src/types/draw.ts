@@ -46,7 +46,7 @@ export interface DrawResultClient {
     threeFormatted: string
     publishedAt?: string
 }
-
+export type WinnerStatus = 'pending' | 'proof_submitted' | 'approved' | 'rejected' | 'paid'
 
 export interface WinnerClient {
     _id: string
@@ -57,5 +57,5 @@ export interface WinnerClient {
     matchedNumbers: number[]
     prizeAmount: number
     prizeFormatted: string
-    status: string
+    status: WinnerStatus
 }

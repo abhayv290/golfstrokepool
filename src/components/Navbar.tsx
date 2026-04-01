@@ -22,13 +22,23 @@ export default function Navbar({ user }: { user: AuthUser | null }) {
     ]
 
     const userItems = [
-        { label: 'Home', url: '/' },
+        { label: 'Home', url: '/dashboard' },
         { label: 'Scores', url: '/dashboard/scores' },
         { label: 'Draws', url: '/dashboard/draws' },
+        { label: 'Charity', url: '/dashboard/charity' },
+    ]
+    const guestUserItem = [
+        { label: 'Dashboard', url: '/dashboard' },
+        { label: 'Charities', url: '/charities' }
     ]
 
     // Select items based on role (default to userItems if not logged in or not admin)
-    const items = (user?.role === 'admin' && pathname.startsWith('/admin')) ? adminItems : userItems
+    let items = guestUserItem
+    if (user && user.role === 'admin' && pathname.startsWith('/admin')) {
+        items = adminItems
+    } else if (user) {
+        items = userItems
+    }
 
     return (
         <div className='sticky top-0 z-50 w-full border-b border-zinc-200 bg-white/95 backdrop-blur-sm dark:border-zinc-800 dark:bg-zinc-950/95 mb-6'>
@@ -39,7 +49,7 @@ export default function Navbar({ user }: { user: AuthUser | null }) {
                     <Link href="/" className='flex items-center gap-2'>
                         <Image width={32} height={32} src={'/favicon.ico'} alt='logo' className="rounded-md" />
                         <h2 className='font-bold text-xl tracking-tight text-zinc-900 dark:text-zinc-50 font-accent'>
-                            Golf Portal
+                            Golf Pool
                         </h2>
                     </Link>
 
@@ -68,7 +78,8 @@ export default function Navbar({ user }: { user: AuthUser | null }) {
                             {/* User Info (Desktop only) */}
                             <div className='hidden md:flex flex-col items-end'>
                                 <span className='text-xs font-bold text-zinc-900 dark:text-zinc-50 leading-none'>{user.name}</span>
-                                <span className='text-[10px] uppercase text-zinc-500 mt-1'>{user.role}</span>
+                                <span className='text-[10px] uppercase text-zinc-500 mt-1'>{
+                                    user.role === 'admin' ? 'admin' : (user.subscriptionStatus === 'active' ? 'subscriber' : 'non-subscriber')}</span>
                             </div>
 
                             <Button

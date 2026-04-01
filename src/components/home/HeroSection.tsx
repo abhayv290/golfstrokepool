@@ -1,12 +1,18 @@
+'use client'
 import { formatINR } from '@/lib/drawEngine'
 import Link from 'next/link'
 import { ArrowRight, Trophy, Users, Heart } from 'lucide-react'
-import { IDraw } from '@/models/Draw'
 
-export default function HeroSection({ latestDraw, subscriberCount }: {
-    latestDraw: IDraw | null,
-    subscriberCount: number
+import { PrizeBreakdown } from '@/types/draw'
+
+export default function HeroSection({ prizePool, subscriberCount }: {
+    prizePool: PrizeBreakdown,
+    subscriberCount: number,
 }) {
+    const handleScrollToHowItWorks = () => {
+        const el = document.getElementById('how-it-works')
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
     return (
         <section className="relative overflow-hidden bg-white dark:bg-zinc-950 pt-16 pb-24 lg:pt-32 lg:pb-40">
             {/* Background decorative element */}
@@ -31,17 +37,17 @@ export default function HeroSection({ latestDraw, subscriberCount }: {
                     {/* CTA Buttons */}
                     <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
                         <Link
-                            href="/register"
-                            className="h-14 px-8 rounded-full bg-zinc-900 text-zinc-50 dark:bg-zinc-50 dark:text-zinc-900 font-bold text-lg flex items-center justify-center gap-2 hover:scale-105 transition-transform shadow-xl shadow-zinc-200 dark:shadow-none"
+                            href="/dashboard/scores"
+                            className="h-14 px-8 rounded-full bg-zinc-700 text-zinc-50 dark:bg-zinc-200 dark:text-zinc-900 hover:bg-zinc-900 dark:hover:bg-zinc-100 font-bold text-lg flex items-center justify-center gap-2  transition-all shadow-xl shadow-zinc-200 dark:shadow-none"
                         >
                             Start playing <ArrowRight className="h-5 w-5" />
                         </Link>
-                        <Link
-                            href="#how-it-works"
-                            className="h-14 px-8 rounded-full border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 font-bold text-lg hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors"
+                        <button
+                            onClick={handleScrollToHowItWorks}
+                            className="h-14 px-8 py-auto rounded-full border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 font-bold text-lg hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors flex items-center"
                         >
                             How it works
-                        </Link>
+                        </button>
                     </div>
 
                     {/* Live Stats Grid */}
@@ -61,14 +67,14 @@ export default function HeroSection({ latestDraw, subscriberCount }: {
                             </div>
 
                             {/* Stat 2 */}
-                            {latestDraw && (
+                            {prizePool && (
                                 <div className="bg-white dark:bg-zinc-950 p-8 flex flex-col items-center gap-2">
                                     <div className="flex items-center gap-2 text-zinc-400 mb-1">
                                         <Trophy className="h-4 w-4" />
                                         <span className="text-[10px] font-bold uppercase tracking-widest">Recent Win</span>
                                     </div>
                                     <span className="text-4xl font-black text-zinc-900 dark:text-zinc-50 tabular-nums">
-                                        {formatINR(latestDraw.prizePool?.total ?? 0)}
+                                        {formatINR(prizePool?.total ?? 0)}
                                     </span>
                                     <span className="text-xs font-bold text-zinc-500 uppercase tracking-tighter">Last prize pool</span>
                                 </div>

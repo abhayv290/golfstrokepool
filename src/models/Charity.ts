@@ -72,6 +72,10 @@ const CharitySchema = new Schema<ICharity>({
     active: { type: Boolean, default: true },
 }, { timestamps: true })
 
+CharitySchema.path('images').validate((value: string[]) => {
+    return value.length <= 5
+}, 'Maximum 5 images allowed')
+
 //Creating Indexing for better search
 CharitySchema.index({ slug: 1 })
 CharitySchema.index({ featured: 1, active: 1 })

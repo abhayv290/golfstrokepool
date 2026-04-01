@@ -2,7 +2,7 @@
 
 import { connectDB } from "@/lib/db"
 import { signToken } from "@/lib/jwt"
-import { clearAuthCookie, getAuthUser, setAuthCookies } from "@/lib/session"
+import { clearAuthCookie, setAuthCookies } from "@/lib/session"
 import User from "@/models/User"
 import { ActionResult, AuthUser } from "@/types/auth"
 import bcrypt from "bcryptjs"
@@ -99,7 +99,6 @@ export async function LoginAction(formdata: FormData): Promise<ActionResult<Auth
             }
         }
 
-
     } catch (err) {
         console.error('LoginAction', err)
         return {
@@ -132,6 +131,7 @@ export async function getSessionUser(): Promise<AuthUser | null> {
             email: user.email,
             role: user.role,
             subscriptionStatus: user.subscriptionStatus,
+            subscriptionEnd: user.subscriptionEnd ? user.subscriptionEnd.toISOString() : undefined
         }
     } catch (err) {
         console.error(err)

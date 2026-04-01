@@ -18,6 +18,7 @@ export interface AuthUser {
     name: string;
     role: UserRole;
     subscriptionStatus: SubscriptionStatus
+    subscriptionEnd?: string
 }
 
 export interface ActionResult<T = void> {

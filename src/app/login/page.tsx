@@ -32,7 +32,7 @@ export default function LoginPage() {
             }
             toast.success(res.message)
             reset()
-            router.push('/')
+            router.refresh() // Refresh to clear any stale auth state
         })
     }
 

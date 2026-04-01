@@ -1,7 +1,5 @@
 import { model, models, Schema } from 'mongoose'
 
-export type WinnerStatus = 'pending' | 'proof_submitted' | 'approved' | 'rejected' | 'paid'
-
 
 const WinnerSchema = new Schema(
     {

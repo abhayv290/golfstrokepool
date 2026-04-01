@@ -6,7 +6,7 @@ import { getAuthUser } from "@/lib/session";
 import Draw, { DrawMode, IDraw } from "@/models/Draw";
 import Score from "@/models/Score";
 import User from "@/models/User";
-import { DrawResultClient, DrawSummary, WinnerClient } from "@/types/draw";
+import { DrawResultClient, DrawSummary, WinnerClient, WinnerStatus } from "@/types/draw";
 import { revalidatePath } from "next/cache";
 import { ActionResult } from "@/types/auth";
 import Winner from "@/models/Winner";
@@ -104,7 +104,7 @@ export async function simulateDrawAction(mode: DrawMode): Promise<ActionResult<{
                     matchedNumbers: w.matchedNumbers,
                     prizeAmount: w.prizeAmount,
                     prizeFormatted: formatINR(w.prizeAmount),
-                    status: 'preview',
+                    status: 'preview' as WinnerStatus
                 }
             })
         )
