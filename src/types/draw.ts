@@ -59,3 +59,4 @@ export interface WinnerClient {
     prizeFormatted: string
     status: WinnerStatus
 }
+

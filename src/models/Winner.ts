@@ -1,7 +1,27 @@
-import { model, models, Schema } from 'mongoose'
+import { Document, model, models, Schema, Types } from 'mongoose'
+import { MatchType } from './Draw'
+import { WinnerStatus } from '@/types/draw'
 
 
-const WinnerSchema = new Schema(
+export interface IWinner extends Document {
+    _id: Types.ObjectId
+    userId: Types.ObjectId
+    drawId: Types.ObjectId
+    matchType: MatchType
+    matchedNumbers: number[]
+    prizeAmount: number
+    status: WinnerStatus
+    proofUrl: string
+    proofUploadedAt: Date
+    adminNote: string
+    reviewedBy: Types.ObjectId
+    reviewedAt: Date
+    paidAt: Date
+    createdAt: Date
+    updatedAt: Date
+}
+
+const WinnerSchema = new Schema<IWinner>(
     {
         userId: {
             type: Schema.Types.ObjectId, ref: 'User', required: true, index: true,
@@ -38,6 +58,6 @@ WinnerSchema.index({ userId: 1, drawId: 1 }, { unique: true })
 WinnerSchema.index({ status: 1 })
 WinnerSchema.index({ drawId: 1, matchType: 1 })
 
-const Winner = models.Winner || model('Winner', WinnerSchema)
+const Winner = models.Winner<IWinner> || model<IWinner>('Winner', WinnerSchema)
 
 export default Winner

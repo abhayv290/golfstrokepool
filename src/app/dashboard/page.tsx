@@ -1,21 +1,26 @@
 import { getSessionUser } from "@/actions/auth"
 import { getCurrentDrawAction } from "@/actions/draw"
 import { getScoreAction } from "@/actions/scores"
+import { getUsersWinningsAction } from "@/actions/winners"
 import CurrentDrawCard from "@/components/dashboard/CurrentDrawCard"
 import { ScoreMiniSummary } from "@/components/dashboard/ScoreMiniSummary"
 import SubscriptionCard from "@/components/dashboard/Stats"
+import WinningHistory from "@/components/dashboard/WinningHitory"
+
 
 import { redirect } from "next/navigation"
 
 
 async function getDashboardData(userId: string) {
-    const [currentDraws, score] = await Promise.all([
+    const [currentDraws, score, winnings] = await Promise.all([
         getCurrentDrawAction(),
-        getScoreAction()
+        getScoreAction(),
+        getUsersWinningsAction()
     ])
     return {
         draw: currentDraws.data ? currentDraws.data.draw : null,
-        winner: currentDraws.data?.winners.find(w => w.userId === userId) ?? null, scores: score.data ?? []
+        winner: currentDraws.data?.winners.find(w => w.userId === userId) ?? null, scores: score.data ?? [],
+        winnings: winnings.data ?? []
     }
 }
 
@@ -23,7 +28,7 @@ export default async function DashboardPage() {
     const user = await getSessionUser()
     if (!user) redirect('/login')
 
-    const { draw, winner, scores } = await getDashboardData(user.userId)
+    const { draw, winner, scores, winnings } = await getDashboardData(user.userId)
 
     return (
         <div className="max-w-7xl mx-auto p-6 lg:p-10 space-y-8 animate-in fade-in duration-700">
@@ -54,10 +59,8 @@ export default async function DashboardPage() {
                 {/* Right Column (Status & History) */}
                 <div className="space-y-6">
                     <SubscriptionCard user={user} />
-                    {/* <WinningsOverview stats={data.winningsStats} /> */}
-                    {/* <RecentHistoryList history={data.drawHistory} /> */}
+                    <WinningHistory winnings={winnings} />
                 </div>
-
             </div>
         </div>
     )
