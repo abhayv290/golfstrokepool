@@ -118,7 +118,7 @@ export default async function HomePage() {
         <section className="max-w-7xl mx-auto px-6 space-y-12">
           <div className="flex items-center justify-between">
             <h2 className="text-3xl font-bold tracking-tight">Charity Spotlight</h2>
-            <Link href="/charities" className="text-sm font-bold text-zinc-400 hover:text-zinc-900">Browse all →</Link>
+            <Link href="/charities" className="text-sm font-bold text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 hover:text-zinc-900 transition-colors">Browse all →</Link>
           </div>
           <CharitySpotlight charity={featuredCharity} />
         </section>

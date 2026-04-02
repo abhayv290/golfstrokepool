@@ -1,7 +1,7 @@
 import { getCharitiesAdminAction, deleteCharityAction, toggleFeatureAction } from '@/actions/admin'
 import { formatINR } from '@/lib/drawEngine'
 import Link from 'next/link'
-import { Plus, Star, Power, Edit2, Globe, Heart } from 'lucide-react'
+import { Plus, Star, Power, Edit2, Globe, Heart, EyeIcon } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { cookies } from 'next/headers'
 
@@ -84,6 +84,11 @@ export default async function AdminCharitiesPage() {
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center justify-end gap-2">
+                                            <Link target='_blank' href={`/charities/${c.slug}`}>
+                                                <Button variant="ghost" title="Edit">
+                                                    <EyeIcon className="h-4 w-4" />
+                                                </Button>
+                                            </Link>
                                             <Link href={`/admin/charities/${c._id}`}>
                                                 <Button variant="ghost" title="Edit">
                                                     <Edit2 className="h-4 w-4" />

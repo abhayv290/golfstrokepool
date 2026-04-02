@@ -1,37 +1,49 @@
 import { connectDB } from "@/lib/db";
 import User from "@/models/User";
 import { RazorpayWebhookEvent } from "@/types/razorpay";
-import { createHmac } from "crypto";
+import { createHmac, timingSafeEqual } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
 // Razorpay sends webhook for subscription  lifecycle events
+
+export async function GET() {
+    return NextResponse.json({ message: 'Hello there' })
+}
+
 export async function POST(req: NextRequest) {
-    const body = await req.text()
-    const signature = req.headers.get('x-razorpay-signature')
+    const body = await req.text();
+    const signature = req.headers.get('x-razorpay-signature');
+    const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
 
-    if (!signature) {
-        return NextResponse.json({ error: true, message: 'Missing Signature' }, { status: 400 })
+    if (!signature || !webhookSecret) {
+        console.error('Webhook: Missing signature or secret configuration');
+        return NextResponse.json({ error: true, message: 'Unauthorized' }, { status: 400 });
     }
 
-    //verify webhook signature 
-    const expectedSignature = createHmac('sha256', process.env.RAZORPAY_WEBHOOK_SECRET!).update(body).digest('hex')
+    const expectedSignature = createHmac('sha256', webhookSecret)
+        .update(body)
+        .digest('hex');
 
-    if (signature !== expectedSignature) {
-        console.error('Webhook,Signature mismatch')
-        return NextResponse.json({ error: true, message: 'Invalid Signature' }, { status: 400 })
+    //timingSafeEqual to prevent timing attacks
+    const signatureBuffer = Buffer.from(signature);
+    const expectedBuffer = Buffer.from(expectedSignature);
+
+    if (signatureBuffer.length !== expectedBuffer.length || !timingSafeEqual(signatureBuffer, expectedBuffer)) {
+        console.error('Webhook: Signature mismatch');
+        return NextResponse.json({ error: true, message: 'Invalid Signature' }, { status: 400 });
     }
-
-    const event = JSON.parse(body)
-    console.log('Webhook, Event Received:', event.event)
+    const event = JSON.parse(body);
 
     try {
-        await connectDB()
-        await handleWebhookEvent(event)
+        await connectDB();
+        await handleWebhookEvent(event);
+
+        return NextResponse.json({ received: true }, { status: 200 });
     } catch (err) {
-        console.error('Webhook', err)
-        return NextResponse.json({ error: true, message: 'Something went wrong' }, { status: 500 })
+        console.error('Webhook Processing Error:', err);
+        // Returning 500 tells Razorpay to try again later
+        return NextResponse.json({ error: true }, { status: 500 });
     }
-    return NextResponse.json({ received: true })
 }
 
 async function handleWebhookEvent(event: RazorpayWebhookEvent) {

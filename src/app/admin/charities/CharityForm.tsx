@@ -3,11 +3,11 @@
 import { useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
-import { createCharityAction, updateCharityAction } from '@/actions/admin'
+import { createCharityAction, updateCharityAction, } from '@/actions/admin'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
-import { Button } from '@/components/ui/Button'
-import { Save, X, Globe, Tag, Info } from 'lucide-react'
+import { Button, LoadingSwap } from '@/components/ui/Button'
+import { Save, X, Globe, Tag, Info, ImageIcon } from 'lucide-react'
 
 const CATEGORIES = ['health', 'education', 'environment', 'poverty', 'sports', 'community', 'other']
 
@@ -19,8 +19,8 @@ interface CharityFormFields {
     category: string
     country: string
     website: string
-    featured: string
-    active: string
+    featured: 'true' | 'false'
+    active: 'true' | 'false'
 }
 
 interface Props {
@@ -56,15 +56,16 @@ export default function CharityForm({ mode, charityId, defaultValues }: Props) {
         if (mode === 'edit' && charityId) formData.set('charityId', charityId)
 
         startTransition(async () => {
-            const result = mode === 'create'
+            const res = mode === 'create'
                 ? await createCharityAction(formData)
                 : await updateCharityAction(formData)
-            if (result?.error) {
-                toast.error(result.message || 'An error occurred')
+            if (res?.error) {
+                toast.error(res.message || 'An error occurred')
                 return
             }
-            toast.success(mode === 'create' ? 'Charity created' : 'Changes saved')
-            router.push('/admin/charities')
+            toast.success(mode === 'create' ? 'Charity created' : 'Changes Saved')
+            if (mode === 'edit') router.push('/admin/charities') // Redirect to list after editing
+            if (mode === 'create') router.push(res.data?._id ? `${res.data._id}/upload` : '/admin/charities')
         })
     }
 
@@ -212,11 +213,19 @@ export default function CharityForm({ mode, charityId, defaultValues }: Props) {
                         type="submit"
                         disabled={isPending}
                         variant="primary"
-                        className="min-w-[140px] flex items-center justify-center gap-2 shadow-lg shadow-zinc-200 dark:shadow-none"
+                        className="min-w-35 flex items-center justify-center gap-2 shadow-lg shadow-zinc-200 dark:shadow-none"
                     >
                         <Save className="h-4 w-4" />
-                        {isPending ? 'Saving...' : mode === 'create' ? 'Create Charity' : 'Save Changes'}
+                        <LoadingSwap isLoading={isPending}>
+                            {mode === 'create' ? 'Create Charity' : 'Save Changes'}
+                        </LoadingSwap>
                     </Button>
+                    {charityId && (<Link
+                        href={charityId + '/upload'}
+                        className="inline-flex items-center gap-2 px-4 py-2 text-sm font-bold text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors"
+                    >
+                        <ImageIcon className="h-4 w-4" /> Update Media
+                    </Link>)}
                 </div>
             </form>
         </div>

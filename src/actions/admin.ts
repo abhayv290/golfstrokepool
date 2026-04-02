@@ -1,5 +1,6 @@
 'use server'
 
+import { deleteFromCloud, uploadToCloudinary } from "@/lib/cloudinary"
 import { connectDB } from "@/lib/db"
 import { getAuthUser } from "@/lib/session"
 import Charity, { CharityCategory } from "@/models/Charity"
@@ -274,7 +275,7 @@ export async function getCharitiesAdminAction(): Promise<ActionResult<CharityLis
 }
 
 
-export async function createCharityAction(formdata: FormData): Promise<ActionResult<{ slug: string }>> {
+export async function createCharityAction(formdata: FormData): Promise<ActionResult<{ slug: string, _id: string }>> {
     try {
         await requireAdmin()
         await connectDB()
@@ -283,11 +284,11 @@ export async function createCharityAction(formdata: FormData): Promise<ActionRes
         const slug = (formdata.get('slug') as string)?.trim()
         const category = (formdata.get('category') as CharityCategory)
         const country = (formdata.get('country') as string)?.trim()
-        const featured = formdata.get('featured') === 'on'
+        const featured = (formdata.get('featured') as 'true' | 'false') === 'true'
         const description = (formdata.get('description') as string)?.trim()
         const shortDescription = (formdata.get('shortDescription') as string)?.trim()
         const website = (formdata.get('website') as string)?.trim()
-
+        const active = (formdata.get('active') as 'true' | 'false') === 'true'
         if (!name || !slug || !description || !shortDescription) {
             return { error: true, message: 'Missing required fields' }
         }
@@ -295,12 +296,12 @@ export async function createCharityAction(formdata: FormData): Promise<ActionRes
         const existing = await Charity.findOne({ slug })
         if (existing) return { error: true, message: 'Slug already exists. Please choose a different one.' }
 
-        await Charity.create({
-            name, slug, category, country, featured, description, shortDescription, website
+        const { _id } = await Charity.create({
+            name, slug, category, country, featured, description, shortDescription, website, active
         })
         revalidatePath('/admin/charities')
         revalidatePath('/charities')
-        return { error: false, message: 'Charity Created Successfully', data: { slug } }
+        return { error: false, message: 'Charity Created Successfully', data: { slug, _id: _id.toString() } }
     } catch (err) {
         console.error('createCharityAction', err)
         return { error: true, message: 'Error Creating Charity' }
@@ -319,11 +320,11 @@ export async function updateCharityAction(formdata: FormData): Promise<ActionRes
         const name = (formdata.get('name') as string)?.trim()
         const category = (formdata.get('category') as string)?.trim()
         const country = (formdata.get('country') as string)?.trim()
-        const featured = formdata.get('featured') === 'on'
+        const featured = (formdata.get('featured') as 'true' | 'false') === 'true'
         const description = (formdata.get('description') as string)?.trim()
         const shortDescription = (formdata.get('shortDescription') as string)?.trim()
         const website = (formdata.get('website') as string)?.trim()
-        const active = Boolean(formdata.get('active') === 'true' as string)
+        const active = (formdata.get('active') as 'true' | 'false') === 'true'
         await Charity.findByIdAndUpdate(charityId, {
             name, category, country, featured, description, shortDescription, website, active
         })
@@ -337,12 +338,128 @@ export async function updateCharityAction(formdata: FormData): Promise<ActionRes
     }
 }
 
+export async function uploadCharityMediaAction(formdata: FormData): Promise<ActionResult> {
+    const charityId = formdata.get('charityId') as string;
+    if (!charityId) return { error: true, message: 'id is required' };
+
+    const coverImage = formdata.get('coverImage') as File | null;
+    const images = formdata.getAll('images') as File[];
+
+    const allowedTypes = ['image/jpg', 'image/jpeg', 'image/png', 'image/webp'];
+    const MAX_SIZE = 1 * 1024 * 1024; // Actual 1MB
+
+    // Validation 
+    if (coverImage && (!allowedTypes.includes(coverImage.type) || coverImage.size > MAX_SIZE)) {
+        return { error: true, message: 'Cover image invalid type or exceeds 1MB' };
+    }
+
+    const validImages = images.filter(img => img.size > 0);
+    if (validImages.some(i => !allowedTypes.includes(i.type) || i.size > MAX_SIZE)) {
+        return { error: true, message: 'Gallery images invalid type or exceed 1MB' };
+    }
+
+    try {
+        await connectDB();
+
+        //check the size of the your gallery 
+        const charity = await Charity.findById(charityId).select('images coverImage').lean()
+        if (charity && (validImages.length > (5 - charity.images.length))) {
+            return { error: true, message: 'you can only upload max 5 gallery images' }
+        }
+        // Upload Cover Image
+        let coverUrl = null;
+        if (coverImage) {
+            const buffer = Buffer.from(await coverImage.arrayBuffer());
+            coverUrl = await uploadToCloudinary(buffer, {
+                folder: 'charityCover',
+                filename: `cover_${Date.now()}`,
+            });
+
+            //Clear the older one if exists
+            if (charity && charity.coverImage) {
+                const oldFileName = (charity.coverImage as string).split('/').pop()
+                if (oldFileName) {
+                    const filename = oldFileName.split('.')[0]
+                    console.log(oldFileName, filename)
+                    await deleteFromCloud('charityCover/' + filename)
+                }
+            }
+        }
+        //  Upload Gallery Images
+        let imagesUrl: string[] = [];
+        if (validImages.length > 0) {
+            imagesUrl = await Promise.all(validImages.map(async (file) => {
+                const buffer = Buffer.from(await file.arrayBuffer());
+                return uploadToCloudinary(buffer, {
+                    folder: 'charityImage',
+                    filename: `img_${Math.random().toString(20).substring(5)}_${Date.now()}`,
+                });
+            }));
+        }
+
+        // Update the DB
+        const updatePayload: Record<string, any> = {
+            $push: { images: { $each: imagesUrl } },
+        };
+        if (coverUrl !== null) {
+            updatePayload.coverImage = coverUrl;
+        }
+        await Charity.findByIdAndUpdate(charityId, updatePayload);
+        revalidatePath('/admin/charities')
+        revalidatePath('/charities')
+        return { error: false, message: 'Media Uploaded successfully' };
+
+    } catch (err) {
+        console.error('UploadCharityMedia Error:', err);
+        return { error: true, message: 'Error processing upload' };
+    }
+}
+
+export async function deleteCharityGalleryImage(charityId: string, fileUrl: string): Promise<ActionResult> {
+    if (!charityId || !fileUrl) return { error: true, message: 'ID and File URL are required' };
+
+    const filename = fileUrl.split('/').pop()?.split('.')[0];
+    if (!filename) {
+        return { error: true, message: 'Invalid file URL format' };
+    }
+
+    try {
+        await connectDB();
+
+        //  Atomic Update: Pull the image and return the document in one go
+        const updatedCharity = await Charity.findByIdAndUpdate(
+            charityId,
+            { $pull: { images: fileUrl } },
+            { returnDocument: 'before' } // Returns the document BEFORE the pull so we can verify the image was there
+        ).select('images');
+
+        if (!updatedCharity) {
+            return { error: true, message: 'Charity not found' };
+        }
+
+        // Check if the image was actually in the array before the update
+        const wasImagePresent = (updatedCharity.images as string[]).includes(fileUrl);
+        if (!wasImagePresent) {
+            return { error: true, message: 'Image not found in this charity gallery' };
+        }
+        const publicId = `charityImage/${filename}`;
+        await deleteFromCloud(publicId);
+
+        revalidatePath('/admin/charities')
+        revalidatePath('/charities')
+        return { error: false, message: 'Image successfully deleted' };
+    } catch (err) {
+        console.error('DeleteMediaFile Error:', err);
+        return { error: true, message: 'Server error while deleting image' };
+    }
+}
+
 export async function deleteCharityAction(charityId: string): Promise<ActionResult> {
     if (!charityId) return { error: true, message: 'Charity ID is required' }
     try {
         await requireAdmin()
         await connectDB()
-        //Soft Delete - Preserve Data for users who selected this charity in the past 
+        //Soft Delete - 
         await Charity.findByIdAndUpdate(charityId, { active: false })
 
         revalidatePath('/admin/charities')

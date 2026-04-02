@@ -9,7 +9,13 @@ export function CharitySpotlight({ charity }: { charity: ICharity }) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center rounded-3xl border border-zinc-200 bg-white p-8 dark:border-zinc-800 dark:bg-zinc-950 shadow-xl">
             <div className="relative aspect-4/3 rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800">
                 {charity.coverImage && (
-                    <Image src={charity.coverImage} alt={charity.name} fill className="object-cover" />
+                    <Image
+                        src={charity.coverImage}
+                        alt={charity.name}
+                        fill
+                        sizes="(min-width: 1024px) 50vw, 100vw"
+                        className="object-cover"
+                    />
                 )}
             </div>
             <div className="space-y-6">

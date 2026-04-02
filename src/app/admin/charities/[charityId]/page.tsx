@@ -63,8 +63,8 @@ export default async function EditCharityPage({ params }: Props) {
                         category: charity.category,
                         country: charity.country,
                         website: charity.website ?? '',
-                        featured: String(charity.featured),
-                        active: String(charity.active),
+                        featured: charity.featured,
+                        active: charity.active,
                     }}
                 />
             </div>

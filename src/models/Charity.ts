@@ -57,7 +57,14 @@ const CharitySchema = new Schema<ICharity>({
         type: String, required: true, maxlength: 1000
     },
     shortDescription: { type: String, required: true, maxlength: 200 },
-    images: [{ type: String }],
+    images: {
+        type: [{ type: String }],
+        validate: {
+            validator: (value: string[]) => value.length <= 5,
+            message: 'Maximum 5 images allowed'
+        },
+        default: []
+    },
     coverImage: { type: String, default: '' },
     website: { type: String, trim: true },
     category: {

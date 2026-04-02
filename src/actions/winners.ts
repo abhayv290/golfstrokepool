@@ -1,5 +1,6 @@
 'use server'
 
+import { uploadToCloudinary } from "@/lib/cloudinary"
 import { connectDB } from "@/lib/db"
 import { formatINR } from "@/lib/drawEngine"
 import { getAuthUser } from "@/lib/session"
@@ -7,12 +8,14 @@ import { MatchType } from "@/models/Draw"
 import Winner from "@/models/Winner"
 import { ActionResult } from "@/types/auth"
 import { WinnerClient, WinnerStatus } from "@/types/draw"
+import { revalidatePath } from "next/cache"
 
 interface IWinnerClient extends Omit<WinnerClient, 'userName' | 'userEmail'> {
     drawDate: string
     reviewedAt?: string
     paidAt?: string
     adminNote?: string
+    proofUrl?: string
 
 }
 export async function getUsersWinningsAction(): Promise<ActionResult<IWinnerClient[]>> {
@@ -47,7 +50,7 @@ export async function getWinnerDetails(id: string): Promise<ActionResult<IWinner
 
     try {
         await connectDB()
-        const wn = await Winner.findById(id)
+        const wn = await Winner.findById({ _id: id, userId: user.userId })
         if (!wn) return { error: true, message: 'No Wins Found' }
 
         return {
@@ -62,7 +65,8 @@ export async function getWinnerDetails(id: string): Promise<ActionResult<IWinner
                 drawDate: wn.createdAt.toISOString(),
                 adminNote: wn.adminNote ?? '',
                 reviewedAt: wn.reviewedAt?.toISOString(),
-                paidAt: wn.paidAt?.toISOString()
+                paidAt: wn.paidAt?.toISOString(),
+                proofUrl: wn.proofUrl,
             }
         }
 
@@ -73,13 +77,66 @@ export async function getWinnerDetails(id: string): Promise<ActionResult<IWinner
 }
 
 
+
+
 export async function uploadWinningProofAction(formdata: FormData): Promise<ActionResult> {
     const user = await getAuthUser()
     if (!user) return {
         error: true, message: 'UnAuthenticated'
     }
+    const winnerId = formdata.get('winnerId') as string
+    if (!winnerId) return {
+        error: true, message: 'Winner Id is required'
+    }
+    const file = formdata.get('proof') as File | null
 
+    if (!file || file.size === 0) return {
+        error: true, message: 'Please select a file to upload'
+    }
+
+    //Validate file type 
+    const allowedTypes = ['image/jpg', 'image/jpeg', 'image/png', 'image/webp']
+
+    if (!allowedTypes.includes(file.type)) {
+        return { error: true, message: 'Only JPG,JPEG ,PNG and WepP images are accepted' }
+    }
+
+    //Validate file size (max 5mb)
+    if (file.size > 5 * 1024 * 1024) {
+        return { error: true, message: 'File must be under 5 MB' }
+    }
     try {
+        await connectDB()
+        //Verify the winner 
+        const winner = await Winner.findById({ _id: winnerId, userId: user.userId })
+        if (!winner) return { error: true, message: 'Winner Not Found' }
+
+        if (['approved', 'paid'].includes(winner.status)) {
+            return { error: true, message: 'This winner has already has been approved' }
+        }
+
+        //Covert File  to Buffer for Cloudinary upload 
+        const arrayBuffer = await file.arrayBuffer()
+        const buffer = Buffer.from(arrayBuffer)
+
+        //Upload - folder : winner-proofs  filename : winnerId so it's deterministic 
+
+        const proofUrl = await uploadToCloudinary(buffer, {
+            folder: 'winner-proofs',
+            filename: `${winnerId}-${user.userId}`,
+            allowedFormat: ['jpg', 'jpeg', 'png', 'webp'],
+            maxBytes: 5 * 1024 * 1024,
+        })
+
+
+        //Upload winner record 
+        await Winner.findByIdAndUpdate(winnerId, {
+            proofUrl, status: 'proof_submitted', proofUploadedAt: new Date(),
+        })
+
+        revalidatePath('dashboard/winners')
+        revalidatePath('admin/winners')
+
         return { error: false, message: 'File Uploaded' }
     } catch (err) {
         console.error('WinningProofAction', err)
