@@ -7,8 +7,10 @@ import { formatINR } from '@/lib/drawEngine'
 import { WinnerAdminItem } from '@/types/admin'
 import toast from 'react-hot-toast'
 import { ChevronDown, ChevronUp, ExternalLink, CheckCircle2, XCircle, Clock, Banknote, Filter, Activity } from 'lucide-react'
+import { MONTH_NAMES as M } from '@/utils/constants'
 
-const MONTH_NAMES = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+const MONTH_NAMES = M.map(m => m.length > 3 ? m.slice(0, 3) : m)
 
 interface ReviewFormFields {
     adminNote: string

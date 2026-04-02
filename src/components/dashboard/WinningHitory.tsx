@@ -100,7 +100,7 @@ export default function WinningHistory({ winnings }: { winnings: Winnings[] }) {
                                             </td>
                                             <td className="px-6 py-4 text-right">
                                                 {w.status === 'pending' ? (
-                                                    <Link href="/dashboard/winnings/verify" className="text-xs font-black uppercase text-zinc-900 dark:text-zinc-50 underline underline-offset-4 hover:opacity-70 transition-opacity">
+                                                    <Link href={`/dashboard/winners/${w._id}/?status=verify`} className="text-xs font-black uppercase text-zinc-900 dark:text-zinc-50 underline underline-offset-4 hover:opacity-70 transition-opacity">
                                                         Verify Now
                                                     </Link>
                                                 ) : (

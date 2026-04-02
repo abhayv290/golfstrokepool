@@ -3,6 +3,11 @@ import { getCurrentDrawAction } from "@/actions/draw"
 import DrawPanel from "@/components/admin/DrawPanel"
 import { redirect } from "next/navigation"
 
+
+export const metadata = {
+    title: 'Draw Management - Admin Dashboard - GolfStrokePool',
+}
+
 export default async function DrawPage() {
     const user = await getSessionUser()
     if (!user || user.role !== 'admin') redirect('/dashboard')

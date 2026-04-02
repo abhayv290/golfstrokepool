@@ -2,6 +2,12 @@ import { getSessionUser } from "@/actions/auth";
 import CheckoutClient from "@/components/dashboard/CheckoutClient";
 import { redirect } from "next/navigation";
 
+export const metadata = {
+    title: 'Subscribe - Dashboard - GolfStrokePool',
+    description: 'Subscribe to GolfStrokePool to enter monthly draws, track your Stableford scores, and support your chosen charity. Choose a plan that fits your game and start making an impact today.',
+    keywords: ['subscribe', 'subscription plans', 'monthly draws', 'Stableford tracking', 'charity support', 'golf rewards', 'dashboard']
+}
+
 export default async function SubscribePage() {
     const user = await getSessionUser()
     if (!user) {

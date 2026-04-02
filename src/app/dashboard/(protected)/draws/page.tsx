@@ -3,12 +3,14 @@ import { getCurrentDrawAction, getPastDrawsAction } from "@/actions/draw"
 import DrawNumberDisplay from "@/components/DrawNumberDisplay"
 import ShowWinners from "@/components/ShowWinners"
 import { redirect } from "next/navigation"
+import { MONTH_NAMES } from "@/utils/constants"
 
 
-const MONTH_NAMES = [
-    '', 'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-]
+export const metadata = {
+    title: 'Draws - Dashboard - GolfStrokePool',
+    description: 'View the results of the monthly draws on GolfStrokePool. Check out the winning numbers and see who won based on their Stableford scores. Stay updated on the latest draw outcomes and your chances to win.',
+    keywords: ['monthly draws', 'winning numbers', 'draw results', 'Stableford scores', 'golf prizes', 'dashboard']
+}
 
 export default async function DrawPage() {
     const user = await getSessionUser()

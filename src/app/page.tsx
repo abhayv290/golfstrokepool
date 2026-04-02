@@ -6,7 +6,7 @@ import User from '@/models/User'
 import HeroSection from '@/components/home/HeroSection'
 import { PrizeTier, StepCard } from '@/components/home/Cards'
 import { CharitySpotlight } from '@/components/home/CharitySpotLight'
-
+import { MONTH_NAMES } from '@/utils/constants'
 async function getHomepageData() {
   await connectDB()
   const [featuredCharity, latestDraw, subscriberCount] = await Promise.all([
@@ -41,7 +41,6 @@ export const PRIZE_TIERS = [
   { match: '3 numbers', pool: '25%', label: 'Third tier', note: 'Split equally among winners' },
 ]
 
-const MONTH_NAMES = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
 export default async function HomePage() {
   const { featuredCharity, latestDraw, subscriberCount } = await getHomepageData();

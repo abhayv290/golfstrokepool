@@ -3,6 +3,13 @@ import { getSessionUser } from '@/actions/auth'
 import { getScoreAction } from '@/actions/scores'
 import ScoreManager from '@/components/dashboard/ScoreManager'
 
+
+export const metadata = {
+  title: 'My Scores - Dashboard - GolfStrokePool',
+  description: 'View and manage your Stableford scores on GolfStrokePool. Keep track of your last 5 scores, add new ones, and see how you are performing over time. Your golf game has never been more rewarding.',
+  keywords: ['golf scores', 'Stableford tracking', 'score management', 'golf performance', 'dashboard']
+}
+
 export default async function ScoresPage() {
   const user = await getSessionUser()
   if (!user) redirect('/login')

@@ -4,8 +4,9 @@ import { formatINR } from '@/lib/drawEngine'
 import { DrawResultClient, WinnerClient } from '@/types/draw'
 import { Trophy, Activity, ArrowRight, CheckCircle2 } from 'lucide-react'
 import Link from 'next/link'
+import { MONTH_NAMES } from '@/utils/constants'
 
-const MONTH_NAMES = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
 export default function CurrentDrawCard({ draw, userScores, winnings }: {
     draw: DrawResultClient | null
     userScores: ScoreEntry[]
@@ -90,7 +91,7 @@ export default function CurrentDrawCard({ draw, userScores, winnings }: {
                             </div>
 
                             <Link
-                                href="/dashboard/winners/verify"
+                                href={`/dashboard/winners/${winnings._id}/?status=verify`}
                                 className="group flex items-center justify-center gap-2 w-full md:w-auto px-6 py-3 bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50 font-black text-xs uppercase tracking-widest rounded-lg hover:opacity-90 transition-all shadow-sm"
                             >
                                 Submit Proof

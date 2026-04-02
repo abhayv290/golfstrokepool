@@ -6,9 +6,13 @@ import CurrentDrawCard from "@/components/dashboard/CurrentDrawCard"
 import { ScoreMiniSummary } from "@/components/dashboard/ScoreMiniSummary"
 import SubscriptionCard from "@/components/dashboard/Stats"
 import WinningHistory from "@/components/dashboard/WinningHitory"
-
-
 import { redirect } from "next/navigation"
+
+export const metadata = {
+    title: 'Dashboard - GolfStrokePool',
+    description: 'Your personalized dashboard on GolfStrokePool. Track your Stableford scores, view your draw history, and see how you stack up against the competition. Your golf game has never been more rewarding.',
+    keywords: ['dashboard', 'golf scores', 'draw history', 'Stableford tracking', 'personalized stats', 'golf performance']
+}
 
 
 async function getDashboardData(userId: string) {

@@ -7,11 +7,8 @@ import toast from 'react-hot-toast'
 import { Button, LoadingSwap } from '../ui/Button'
 import DrawNumberDisplay from '../DrawNumberDisplay'
 import ShowWinners from '../ShowWinners'
+import { MONTH_NAMES } from '@/utils/constants'
 
-const MONTH_NAMES = [
-    '', 'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-]
 const MATCH_LABELS: Record<string, string> = {
     five: '5 number match',
     four: '4 number match',

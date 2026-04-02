@@ -4,6 +4,12 @@ import { getCharitiesAction, getUserCharitySelectionAction } from '@/actions/cha
 import CharitySelector from './CharitySelection'
 import { Heart, ShieldCheck, Info } from 'lucide-react'
 
+export const metadata = {
+    title: 'Charity Allocation - Dashboard - GolfStrokePool',
+    description: 'Manage your charity allocation on GolfStrokePool. Choose which organization receives a portion of your monthly subscription. A minimum of 10% is always contributed to support impactful causes through golf.',
+    keywords: ['charity allocation', 'dashboard', 'golfstrokepool', 'subscription impact', 'nonprofit support', 'social good', 'golf charity']
+}
+
 export default async function DashboardCharityPage() {
     const user = await getSessionUser()
     if (!user) redirect('/login')

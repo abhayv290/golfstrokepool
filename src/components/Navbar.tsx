@@ -49,7 +49,7 @@ export default function Navbar({ user }: { user: AuthUser | null }) {
                     <Link href="/" className='flex items-center gap-2'>
                         <Image width={32} height={32} src={'/favicon.ico'} alt='logo' className="rounded-md" />
                         <h2 className='font-bold text-xl tracking-tight text-zinc-900 dark:text-zinc-50 font-accent'>
-                            Golf Pool
+                            GolfStrokePool
                         </h2>
                     </Link>
 

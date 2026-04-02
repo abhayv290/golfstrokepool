@@ -5,6 +5,10 @@ import { Plus, Star, Power, Edit2, Globe, Heart } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { cookies } from 'next/headers'
 
+export const metadata = {
+    title: 'Charities - Admin Dashboard - GolfStrokePool',
+}
+
 export default async function AdminCharitiesPage() {
     await cookies()
     const result = await getCharitiesAdminAction()

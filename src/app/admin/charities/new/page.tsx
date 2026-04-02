@@ -2,6 +2,10 @@ import CharityForm from '../CharityForm'
 import Link from 'next/link'
 import { ChevronLeft } from 'lucide-react'
 
+export const metadata = {
+    tittle: 'Add New Charity - Admin Dashboard - GolfStrokePool',
+}
+
 export default function NewCharityPage() {
     return (
         <div className="max-w-5xl mx-auto p-6 lg:p-10 space-y-6">

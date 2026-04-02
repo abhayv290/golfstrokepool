@@ -2,6 +2,12 @@ import { getUsersAction } from '@/actions/admin'
 import Link from 'next/link'
 import { Search, RotateCcw, UserCircle, Edit2 } from 'lucide-react'
 
+
+export const metadata = {
+    title: 'Users - Admin Dashboard - GolfStrokePool',
+}
+
+
 export default async function AdminUsersPage({
     searchParams,
 }: {

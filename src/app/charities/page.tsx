@@ -5,9 +5,17 @@ import Link from 'next/link'
 import { Search, Filter, Globe, Heart, ArrowRight, X } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { CharityCategory } from '@/models/Charity'
+import { title } from 'process'
 
 
 const CATEGORIES = ['health', 'education', 'environment', 'poverty', 'sports', 'community', 'other'] as CharityCategory[]
+
+
+export const metadata = {
+    title: 'Charities - GolfStrokePool',
+    description: 'Discover the charities supported by GolfStrokePool. Every subscription helps make a difference. Explore the causes we champion and how your game can drive impact.',
+    keywords: ['charities', 'causes', 'nonprofits', 'golf charity', 'social impact', 'donations', 'community support'],
+}
 
 export default async function CharitiesPage({
     searchParams,

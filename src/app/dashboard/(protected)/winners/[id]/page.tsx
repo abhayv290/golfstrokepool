@@ -4,9 +4,18 @@ import { Trophy, Wallet } from 'lucide-react'
 import { getWinnerDetails } from '@/actions/winners'
 import WinnerProofForm from '../ProofForm'
 
+
+
+export const metadata = {
+    title: 'Winner Details - Dashboard - GolfStrokePool',
+    description: 'See the details of your winnings on GolfStrokePool. View the prize amount, the draw you won, and submit proof of your win to claim your reward. Your golf game has never been more rewarding.',
+    keywords: ['winner details', 'dashboard', 'golfstrokepool', 'prize amount', 'winning draw', 'claim prize', 'golf rewards']
+}
+
 interface Props {
     params: Promise<{ id: string }>
 }
+
 export default async function WinnerDetailsPage({ params }: Props) {
     const { id } = await params
     const { error, data: winner } = await getWinnerDetails(id)
