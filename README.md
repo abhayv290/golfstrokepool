@@ -1,4 +1,4 @@
-# Golf Platform
+# GolfStrokePool
 
 A full-stack golf subscription platform where players:
 

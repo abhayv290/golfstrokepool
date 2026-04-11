@@ -45,7 +45,7 @@ export async function createSubscriptionAction(
             const customer = await razorpay.customers.create({
                 name: user.name,
                 email: user.email,
-                fail_existing: false
+                fail_existing: 0
             })
             customerId = customer.id
             user.razorpayCustomerId = customerId
@@ -84,7 +84,7 @@ export async function createSubscriptionAction(
     } catch (err) {
         console.error('CreateSubscriptionError', err)
         return {
-            error: true, message: 'Something went wrong'
+            error: true, message: 'Something went wrong during payment'
         }
     }
 
