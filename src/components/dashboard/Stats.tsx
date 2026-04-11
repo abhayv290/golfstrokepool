@@ -18,7 +18,7 @@ export default function SubscriptionCard({ user }: { user: AuthUser }) {
             <p className="text-xs text-zinc-500 mt-1">
                 {isActive ? `Renews on ${user.subscriptionEnd?.split('T')[0]}` : 'Subscription is currently inactive'}
             </p>
-            <Link href="/dashboard/plan" className="mt-4 flex items-center justify-between group">
+            <Link href="/dashboard/profile" className="mt-4 flex items-center justify-between group">
                 <span className="text-xs font-bold text-zinc-600 dark:text-zinc-400 dark:group-hover:text-zinc-200 group-hover:text-zinc-800 transition-colors uppercase tracking-widest">Manage Plan</span>
                 <ArrowRight className="h-4 w-4 text-zinc-300 group-hover:translate-x-1 transition-all" />
             </Link>
