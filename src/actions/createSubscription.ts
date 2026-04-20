@@ -87,7 +87,6 @@ export async function createSubscriptionAction(
             error: true, message: 'Something went wrong during payment'
         }
     }
-
 }
 
 export async function verifyPaymentAction(payload: {
@@ -126,7 +125,7 @@ export async function verifyPaymentAction(payload: {
         }, {
             subscriptionStatus: 'active',
             subscriptionEnd: subscriptionEnd
-        }, { new: true })
+        }, { returnDocument: 'after' })
 
         if (!user) {
             return { error: true, message: 'User or Subscription not found' }
@@ -137,7 +136,10 @@ export async function verifyPaymentAction(payload: {
             userId: user._id.toString(),
             email: user.email,
             role: user.role,
-            subscriptionStatus: user.subscriptionStatus
+            subscriptionStatus: user.subscriptionStatus,
+            subscriptionEnd: user.subscriptionEnd
+                ? Math.floor(user.subscriptionEnd.getTime() / 1000)
+                : undefined,
         })
 
         await setAuthCookies(token)

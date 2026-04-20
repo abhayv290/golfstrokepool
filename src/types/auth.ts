@@ -7,6 +7,7 @@ export interface JWTPayload {
     email: string
     role: UserRole
     subscriptionStatus: SubscriptionStatus
+    subscriptionEnd?: number
     iat?: number
     exp?: number
 }

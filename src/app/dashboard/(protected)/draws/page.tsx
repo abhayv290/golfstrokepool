@@ -15,7 +15,6 @@ export const metadata = {
 export default async function DrawPage() {
     const user = await getSessionUser()
     if (!user) redirect('/login')
-    if (user.subscriptionStatus !== 'active') redirect('/dashboard/subscribe')
 
     const [currentRes, pastRes] = await Promise.all([
         getCurrentDrawAction(),

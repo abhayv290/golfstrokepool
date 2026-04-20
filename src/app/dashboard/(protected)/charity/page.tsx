@@ -14,8 +14,8 @@ export default async function DashboardCharityPage() {
     const user = await getSessionUser()
     if (!user) redirect('/login')
 
-    // Safety check: only active subscribers can manage their charity allocation
-    if (user.subscriptionStatus !== 'active') redirect('/dashboard/subscribe')
+    // // Safety check: only active subscribers can manage their charity allocation
+    // if (user.subscriptionStatus !== 'active') redirect('/dashboard/subscribe')
 
     const [charitiesResult, selectionResult] = await Promise.all([
         getCharitiesAction(),

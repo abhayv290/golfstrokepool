@@ -30,12 +30,18 @@ export default function middleware(request: NextRequest) {
 
         //page acceesible without active subscription 
         const SUBS_EXEMPT = [
-            '/dashboard/subscribe', '/dashboard/settings/'
+            '/dashboard/subscribe', '/dashboard/profile',
+            '/dashboard/subscription',
         ]
 
         const isExempt = SUBS_EXEMPT.some(p => pathname.startsWith(p))
+        const hasAccess =
+            payload?.subscriptionStatus === 'active' ||
+            (payload?.subscriptionStatus === 'cancelled' &&
+                payload?.subscriptionEnd &&
+                Date.now() / 1000 < payload.subscriptionEnd) // compare unix timestamps
 
-        if (!isExempt && payload?.subscriptionStatus !== 'active') {
+        if (!isExempt && !hasAccess) {
             return NextResponse.redirect(new URL('/dashboard/subscribe', request.url))
         }
         return NextResponse.next()

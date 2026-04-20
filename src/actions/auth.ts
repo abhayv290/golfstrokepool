@@ -38,7 +38,10 @@ export async function registerAction(
             userId: user._id.toString(),
             email: user.email,
             role: user.role,
-            subscriptionStatus: user.subscriptionStatus
+            subscriptionStatus: user.subscriptionStatus,
+            subscriptionEnd: user.subscriptionEnd
+                ? Math.floor(user.subscriptionEnd.getTime() / 1000)
+                : undefined,
         })
 
         await setAuthCookies(token)
@@ -82,7 +85,10 @@ export async function LoginAction(formdata: FormData): Promise<ActionResult<Auth
             userId: user._id.toString(),
             email: user.email,
             role: user.role,
-            subscriptionStatus: user.subscriptionStatus
+            subscriptionStatus: user.subscriptionStatus,
+            subscriptionEnd: user.subscriptionEnd
+                ? Math.floor(user.subscriptionEnd.getTime() / 1000)
+                : undefined,
         })
 
         await setAuthCookies(token)

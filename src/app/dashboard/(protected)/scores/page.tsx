@@ -13,7 +13,6 @@ export const metadata = {
 export default async function ScoresPage() {
   const user = await getSessionUser()
   if (!user) redirect('/login')
-  if (user.subscriptionStatus !== 'active') redirect('/dashboard/subscribe')
 
   const scores = (await getScoreAction()).data
 

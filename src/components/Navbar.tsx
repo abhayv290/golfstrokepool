@@ -77,9 +77,9 @@ export default function Navbar({ user }: { user: AuthUser | null }) {
                         <div className='flex items-center gap-4'>
                             {/* User Info (Desktop only) */}
                             <div className='hidden md:flex flex-col items-end'>
-                                <span className='text-xs font-bold text-zinc-900 dark:text-zinc-50 leading-none'>{user.name}</span>
+                                <Link href={'/dashboard/profile'} className='text-xs font-bold text-zinc-900 dark:text-zinc-50 leading-none'>{user.name}</Link>
                                 <span className='text-[10px] uppercase text-zinc-500 mt-1'>{
-                                    user.role === 'admin' ? 'admin' : (user.subscriptionStatus === 'active' ? 'subscriber' : 'non-subscriber')}</span>
+                                    user.role}</span>
                             </div>
 
                             <Button
@@ -136,8 +136,9 @@ export default function Navbar({ user }: { user: AuthUser | null }) {
                         <div className="pt-6 border-t border-zinc-100 dark:border-zinc-800 flex items-center gap-3">
                             <UserCircle className="h-10 w-10 text-zinc-300" />
                             <div>
-                                <p className="font-bold text-zinc-900 dark:text-zinc-50">{user.name}</p>
-                                <p className="text-xs text-zinc-500 uppercase">{user.role}</p>
+                                <Link href={'/dashboard/profile'} className="font-bold text-zinc-900 dark:text-zinc-50">{user.name}</Link>
+                                <p className="text-xs text-zinc-500 uppercase">{
+                                    user.role}</p>
                             </div>
                         </div>
                     )}
