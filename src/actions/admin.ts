@@ -472,6 +472,65 @@ export async function deleteCharityAction(charityId: string): Promise<ActionResu
     }
 }
 
+const PLAN_AMOUNT: Record<string, number> = {
+    monthly: Number(process.env.RAZORPAY_MONTHLY_AMOUNT) || 99900,
+    yearly: Math.floor((Number(process.env.RAZORPAY_YEARLY_AMOUNT) || 999900) / 12), // monthly equivalent
+}
+/** Raise Money for Charity Trigger (Manual) */
+export async function triggerRaiseMoneyForCharity(): Promise<ActionResult> {
+    const auth = await getAuthUser()
+    if (!auth || auth.role !== 'admin') {
+        return { error: true, message: 'Only Accessed by Admin' }
+    }
+
+    //fetch all active subscriber 
+    try {
+        await connectDB()
+
+        const allActive = await User.find({ subscriptionStatus: 'active' }).lean()
+        const withCharity = allActive.filter(u => u.selectedCharityId)
+
+        if (withCharity.length === 0) {
+            return {
+                error: true, message: 'No Active Subscriber  with charity selected'
+            }
+        }
+
+        // Build a map: charityId → { totalPaise, count }
+        const charityMap = new Map<
+            string,
+            { totalPaise: number; count: number }
+        >()
+
+        for (const user of withCharity) {
+            const charityId = user.selectedCharityId!.toString()
+            const planAmount = PLAN_AMOUNT[(user as any).subscriptionPlan ?? 'monthly'] ?? PLAN_AMOUNT.monthly
+            const contribution = Math.floor(planAmount * (user.charityContributionPercent / 100))
+
+            const existing = charityMap.get(charityId) ?? { totalPaise: 0, count: 0 }
+            charityMap.set(charityId, {
+                totalPaise: existing.totalPaise + contribution,
+                count: existing.count + 1,
+            })
+        }
+
+        // Bulk update each charity's totalRaised in parallel
+        await Promise.all(
+            Array.from(charityMap.entries()).map(([charityId, { totalPaise }]) =>
+                Charity.findByIdAndUpdate(charityId, {
+                    $inc: { totalRaised: totalPaise },
+                })
+            )
+        )
+
+        return { error: false, message: 'Total Money Raised' }
+    } catch (err) {
+        console.error('TriggerCharityMoneyRaised', err)
+        return { error: true, message: 'Some Error Occurred during trigger charity money raised' }
+    }
+}
+
+
 export async function toggleFeatureAction(charityId: string, featured: boolean): Promise<ActionResult> {
     if (!charityId) return { error: true, message: 'Charity ID is required' }
     try {

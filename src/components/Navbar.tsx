@@ -18,7 +18,8 @@ export default function Navbar({ user }: { user: AuthUser | null }) {
         { label: 'Draws', url: '/admin/draws' },
         { label: 'Winners', url: '/admin/winners' },
         { label: 'Users', url: '/admin/users' },
-        { label: 'Charities', url: '/admin/charities' }
+        { label: 'Charities', url: '/admin/charities' },
+        { label: 'Contribution', url: '/admin/contributions' }
     ]
 
     const userItems = [
