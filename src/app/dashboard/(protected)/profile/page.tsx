@@ -14,7 +14,8 @@ import {
     Heart,
     ExternalLink,
     Zap,
-    Settings
+    Settings,
+    Key
 } from 'lucide-react'
 
 async function getUserProfile(userId: string) {
@@ -78,6 +79,11 @@ export default async function ProfilePage() {
                                 month: 'long',
                                 year: 'numeric',
                             })}
+                        />
+                        <InfoTile
+                            icon={<Key className="w-3.5 h-3.5" />}
+                            label="Change Password"
+                            value={''}
                         />
                     </div>
                 </section>
@@ -206,6 +212,7 @@ function InfoTile({
             <div className="mt-1 text-zinc-600">{icon}</div>
             <div className="flex flex-col space-y-0.5">
                 <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-tighter italic">{label}</span>
+                {label === 'Change Password' && <Link href={'/dashboard/profile/change-password'} className={`text-sm text-zinc-200 font-medium hover:text-blue-100 ${className}`}>Change Password</Link>}
                 <span className={`text-sm text-zinc-200 font-medium ${className}`}>{value}</span>
             </div>
         </div>

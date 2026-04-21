@@ -92,7 +92,11 @@ export default function LoginPage() {
                             className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none disabled:bg-slate-50 dark:bg-zinc-800 dark:border-zinc-700 dark:focus:border-blue-400 aria-invalid:border-red-500"
                             {...register('password', {
                                 required: 'Password is required',
-                                minLength: { value: 6, message: 'Must be at least 6 characters' }
+                                minLength: { value: 6, message: 'Must be at least 6 characters' },
+                                pattern: {
+                                    value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+                                    message: 'Must include uppercase, lowercase, and a number',
+                                },
                             })}
                         />
                         {errors.password && (
@@ -115,10 +119,13 @@ export default function LoginPage() {
                 <div className="mt-8 pt-6 border-t border-slate-100 dark:border-zinc-800 text-center">
                     <p className="text-sm text-muted-foreground">
                         New to Golf-Portal?{' '}
-                        <Link href="/register" className="font-bold text-blue-600 hover:text-blue-500 dark:text-blue-400 transition-colors">
+                        <Link href="/register" className="font-bold text-blue-600 hover:underline dark:text-blue-400">
                             Create an account
                         </Link>
                     </p>
+                    <Link href={'/forgot-password'} className="text-sm text-blue-400 hover:underline">
+                        Forgot Password
+                    </Link>
                 </div>
             </div>
         </div>
