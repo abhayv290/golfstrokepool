@@ -46,7 +46,7 @@ export default async function HomePage() {
   const { featuredCharity, latestDraw, subscriberCount } = await getHomepageData();
   return (
     <div className="space-y-10 pb-24 overflow-y-auto scroll-smooth ">
-      <HeroSection prizePool={latestDraw.prizePool} subscriberCount={subscriberCount} />
+      <HeroSection prizePool={latestDraw?.prizePool ?? 1} subscriberCount={subscriberCount} />
       {/* How it works Section */}
       <section id='how-it-works' className="max-w-7xl mx-auto px-6 space-y-12 scroll-mt-20">
         <div className="text-center space-y-4">

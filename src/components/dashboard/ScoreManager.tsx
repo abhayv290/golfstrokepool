@@ -15,6 +15,8 @@ export default function ScoreManager({ initialScores }: { initialScores: ScoreEn
     const [scores, setScores] = useState(initialScores)
     const [editingId, setEditingId] = useState<string | null>(null)
     const [isPending, startTransition] = useTransition()
+    const [isDeleting, startDeletion] = useTransition()
+    const [deleteIdx, setDeletionIdx] = useState(0)
 
     //today's date 
     const todayStr = new Date().toISOString().split('T')[0]
@@ -70,9 +72,10 @@ export default function ScoreManager({ initialScores }: { initialScores: ScoreEn
     }
 
     //DELETE 
-    const onDelete = (scoreId: string) => {
+    const onDelete = (scoreId: string, index: number) => {
         if (!scoreId) return
-        startTransition(async () => {
+        setDeletionIdx(index)
+        startDeletion(async () => {
             const res = await deleteScoreAction(scoreId)
             if (res.error) {
                 toast.error(res.message)
@@ -152,8 +155,8 @@ export default function ScoreManager({ initialScores }: { initialScores: ScoreEn
                                         className="w-24">
                                         {isBeingEdited ? 'Cancel' : 'Edit'}
                                     </Button>
-                                    <Button type="button" variant="secondary" onClick={() => onDelete(score._id)} disabled={isPending} className="w-24 hover:bg-red-500/70" >
-                                        <LoadingSwap isLoading={isPending && !isEditing}>
+                                    <Button type="button" variant="secondary" onClick={() => onDelete(score._id, index)} disabled={isDeleting && index === deleteIdx} className="w-24 hover:bg-red-500/70" >
+                                        <LoadingSwap isLoading={isDeleting && index === deleteIdx}>
                                             Delete
                                         </LoadingSwap>
                                     </Button>

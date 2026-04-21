@@ -5,7 +5,7 @@ import Winner from '@/models/Winner'
 import { formatINR } from '@/lib/drawEngine'
 import Link from 'next/link'
 import { Users, CreditCard, Award, Banknote, ArrowRight, Activity } from 'lucide-react'
-import { cookies } from 'next/headers'
+
 
 async function getStats() {
     await connectDB()

@@ -2,11 +2,29 @@
 
 import { connectDB } from "@/lib/db"
 import { signToken } from "@/lib/jwt"
+import { sendNewLoginEmail, sendWelcomeEmail } from "@/lib/resend"
 import { clearAuthCookie, setAuthCookies } from "@/lib/session"
 import User from "@/models/User"
 import { ActionResult, AuthUser } from "@/types/auth"
 import bcrypt from "bcryptjs"
+import { headers } from "next/headers"
 import { redirect } from "next/navigation"
+
+type LoginRequestDetails = {
+    ipAddress?: string
+    userAgent?: string
+}
+
+async function getLoginRequestDetails(): Promise<LoginRequestDetails> {
+    const headerList = await headers()
+    const forwardedFor = headerList.get('x-forwarded-for')
+    const realIp = headerList.get('x-real-ip')
+
+    return {
+        ipAddress: forwardedFor?.split(',')[0]?.trim() || realIp || undefined,
+        userAgent: headerList.get('user-agent') || undefined,
+    }
+}
 
 
 //Register The User
@@ -45,7 +63,11 @@ export async function registerAction(
         })
 
         await setAuthCookies(token)
-
+        try {
+            sendWelcomeEmail(email, name)
+        } catch (err) {
+            console.error('Welcome Email', err)
+        }
         return {
             error: false, message: 'User Registered', data: {
                 userId: user._id.toString(),
@@ -65,6 +87,8 @@ export async function LoginAction(formdata: FormData): Promise<ActionResult<Auth
     const email = (formdata.get('email') as string).trim().toLocaleLowerCase()
     const password = (formdata.get('password') as string).trim()
     try {
+        const requestDetails = await getLoginRequestDetails()
+
         await connectDB()
 
         const user = await User.findOne({ email }).select('+passwordHash')
@@ -92,6 +116,16 @@ export async function LoginAction(formdata: FormData): Promise<ActionResult<Auth
         })
 
         await setAuthCookies(token)
+
+        try {
+            await sendNewLoginEmail(user.email, {
+                ipAddress: requestDetails.ipAddress,
+                userAgent: requestDetails.userAgent,
+                loggedInAt: new Date(),
+            })
+        } catch (emailErr) {
+            console.error('sendNewLoginEmail', emailErr)
+        }
 
         return {
             error: false,
