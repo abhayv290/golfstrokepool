@@ -33,7 +33,7 @@ export function CharitySpotlight({ charity }: { charity: ICharity }) {
                 </div>
 
                 <div className="flex flex-wrap gap-4 pt-2">
-                    <Link href={`/charities/${charity.slug}`} className="px-6 py-3 rounded-xl bg-zinc-900 text-zinc-50 font-bold hover:bg-zinc-800 transition-colors dark:bg-zinc-50 dark:text-zinc-900">
+                    <Link href={`/charities/${charity.slug}`} className=" text-center px-6 py-3 border  rounded-xl transition-colors bg-zinc-800 text-zinc-200 hover:bg-zinc-900 hover:text-zinc-100 dark:bg-zinc-400 dark:text-zinc-700 dark:hover:bg-zinc-300 dark:hover:text-zinc-800 font-semibold">
                         Learn more
                     </Link>
                     {charity.website && (

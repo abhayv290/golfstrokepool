@@ -10,7 +10,8 @@ import { DrawResultClient, DrawSummary, WinnerClient, WinnerStatus } from "@/typ
 import { revalidatePath } from "next/cache";
 import { ActionResult } from "@/types/auth";
 import Winner from "@/models/Winner";
-
+import { sendDrawBroadcastEmail } from "@/lib/resend";
+import { MONTH_NAMES } from "@/utils/constants";
 //Helper function to build subscriber list from db 
 async function getActiveSubscribers() {
     const users = await User.find({ subscriptionStatus: 'active' }).lean()
@@ -207,6 +208,17 @@ export async function publishDrawAction(): Promise<ActionResult<{ draw: DrawResu
         revalidatePath('/admin/draws')
         revalidatePath('/dashboard/draws')
 
+        //announce draw has been published
+        const activeUsers = await User.find({ subscriptionStatus: 'active' })
+            .select('email name')
+            .lean()
+
+        sendDrawBroadcastEmail(
+            activeUsers.map((u) => ({ email: u.email, name: u.name })),
+            published.drawnNumbers,
+            MONTH_NAMES[published.month],
+            published.year
+        ).catch((err) => console.error('[sendDrawBroadcastEmail]', err))
         return {
             error: false, message: 'Draw Published',
             data: {

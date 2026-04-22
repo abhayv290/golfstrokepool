@@ -135,3 +135,55 @@ export async function sendNewLoginEmail(
     `,
   })
 }
+
+
+export async function sendDrawBroadcastEmail(
+  recipients: { email: string; name: string }[],
+  drawnNumbers: number[],
+  month: string,
+  year: number
+): Promise<void> {
+  const BATCH_SIZE = 50
+  const batches = []
+
+  for (let i = 0; i < recipients.length; i += BATCH_SIZE) {
+    batches.push(recipients.slice(i, i + BATCH_SIZE))
+  }
+
+  for (const batch of batches) {
+    await resend.batch.send(
+      batch.map((r) => ({
+        from: FROM,
+        to: r.email,
+        subject: `${month} ${year} draw results are in`,
+        html: `
+          <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px">
+            <h2 style="margin:0 0 8px">${month} ${year} draw</h2>
+            <p style="color:#666;margin:0 0 24px">
+              Hi ${r.name}, the monthly draw numbers have been published.
+            </p>
+            <p style="color:#666;margin:0 0 8px">This month's numbers:</p>
+            <div style="display:flex;gap:12px;margin-bottom:24px">
+              ${drawnNumbers
+            .map(
+              (n) => `
+                <span style="display:inline-flex;align-items:center;justify-content:center;
+                             width:48px;height:48px;border-radius:10px;
+                             background:#f4f4f5;font-size:22px;font-weight:700">
+                  ${n}
+                </span>`
+            )
+            .join('')}
+            </div>
+            <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/draws"
+               style="display:inline-block;background:#18181b;color:#fff;
+                      padding:12px 24px;border-radius:8px;
+                      text-decoration:none;font-weight:600">
+              See if you won
+            </a>
+          </div>
+        `,
+      }))
+    )
+  }
+}

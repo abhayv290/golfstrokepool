@@ -27,7 +27,8 @@ export default function DrawPanel({ initialDraw, initialWinners }: {
     const [draw, setDraw] = useState<DrawResultClient | null>(initialDraw)
     const [winners, setWinners] = useState<WinnerClient[]>(initialWinners)
     const [mode, setMode] = useState<'random' | 'weighted'>('random')
-    const [isPending, startTransition] = useTransition()
+    const [isPending, startSimulation] = useTransition()
+    const [isPublishing, startPublishing] = useTransition()
 
     const isPublished = draw?.status === 'published'
     const isSimulated = draw?.status === 'simulated'
@@ -35,7 +36,7 @@ export default function DrawPanel({ initialDraw, initialWinners }: {
 
     //Simulate draw - 
     const handleSimulate = () => {
-        startTransition(async () => {
+        startSimulation(async () => {
             const res = await simulateDrawAction(mode)
             if (res?.error) {
                 toast.error(res.message || 'Simulation failed')
@@ -50,7 +51,7 @@ export default function DrawPanel({ initialDraw, initialWinners }: {
     //Publish draw -
     const handlePublish = () => {
         if (!confirm('Are you sure you want to publish this draw? This action cannot be undone.')) return
-        startTransition(async () => {
+        startPublishing(async () => {
             const res = await publishDrawAction()
             if (res?.error) {
                 toast.error(res.message || 'Publish failed')
@@ -133,9 +134,9 @@ export default function DrawPanel({ initialDraw, initialWinners }: {
                         </Button>
 
                         {isSimulated && (
-                            <Button type="button" variant="secondary" disabled={isPending} onClick={handlePublish} className="flex-1 h-12 rounded-xl text-sm font-bold bg-zinc-800 border-zinc-700 hover:bg-zinc-700">
-                                <LoadingSwap isLoading={isPending}>
-                                    {isPending ? 'Publishing...' : '🚀 Publish Draw'}
+                            <Button type="button" variant="secondary" disabled={isPublishing} onClick={handlePublish} className="flex-1 h-12 rounded-xl text-sm font-bold bg-zinc-800 border-zinc-700 hover:bg-zinc-700">
+                                <LoadingSwap isLoading={isPublishing}>
+                                    🚀 Publish Draw
                                 </LoadingSwap>
                             </Button>
                         )}
